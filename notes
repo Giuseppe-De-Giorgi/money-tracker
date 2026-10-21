@@ -11,3 +11,16 @@ http://localhost:8080/h2-console.
 3) JDBC URL: jdbc:h2:mem:moneytracker
    User Name: sa
    Password: vuota
+
+_____________________________________________________________________________
+
+AVVIO POSTGRES IN DOCKER:
+- primo comando per installarlo:
+docker run --name mt-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=moneytracker -p 5432:5432 -d postgres:16
+- configurare il datasource nell'application.properties' con le seguenti righe:
+spring.datasource.url=jdbc:postgresql://localhost:5432/moneytracker
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.open-in-view=false

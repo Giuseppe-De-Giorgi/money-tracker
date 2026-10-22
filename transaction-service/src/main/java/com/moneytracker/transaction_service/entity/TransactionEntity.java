@@ -20,22 +20,23 @@ import java.time.LocalDate;
 public class TransactionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @Positive
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(name = "amount", nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
 
-    @Column(length = 255)
+    @Column(name = "description", length = 255)
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "type", nullable = false)
     private TransactionType type;
 
-    @Column(nullable = false)
-    private LocalDate date;
+    @Column(name = "data", nullable = false)
+    private LocalDate data;
 
-    @Column(nullable = false)
+    @Column(name = "category", length = 50, nullable = false)
     private String category;
 }

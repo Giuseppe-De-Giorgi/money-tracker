@@ -38,7 +38,7 @@ class TransactionRepositoryTest {
         transaction.setAmount(new BigDecimal("12.50"));
         transaction.setType(TransactionType.EXPENSE);
         transaction.setCategory("Food");
-        transaction.setDate(LocalDate.of(2026, 10, 21));
+        transaction.setData(LocalDate.of(2026, 10, 21));
         transaction.setDescription("Lunch");
 
         // when
@@ -52,7 +52,7 @@ class TransactionRepositoryTest {
         assertThat(result.getAmount()).isEqualByComparingTo("12.50");
         assertThat(result.getType()).isEqualTo(TransactionType.EXPENSE);
         assertThat(result.getCategory()).isEqualTo("Food");
-        assertThat(result.getDate()).isEqualTo(LocalDate.of(2026, 10, 21));
+        assertThat(result.getData()).isEqualTo(LocalDate.of(2026, 10, 21));
         assertThat(result.getDescription()).isEqualTo("Lunch");
     }
 
@@ -62,7 +62,7 @@ class TransactionRepositoryTest {
         TransactionEntity transaction = new TransactionEntity();
         transaction.setAmount(new BigDecimal("12.50"));
         transaction.setType(TransactionType.EXPENSE);
-        transaction.setDate(LocalDate.of(2026, 10, 21));
+        transaction.setData(LocalDate.of(2026, 10, 21));
         transaction.setDescription("Lunch");
 
         // when / then

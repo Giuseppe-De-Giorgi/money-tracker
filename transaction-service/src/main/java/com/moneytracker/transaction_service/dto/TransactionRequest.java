@@ -15,7 +15,7 @@ public record TransactionRequest(
         TransactionType type,
         @NotNull
         LocalDate data,
-        @NotNull @Size(max = 50)
+        @NotBlank @Size(max = 50)
         String category
 ) {
 }

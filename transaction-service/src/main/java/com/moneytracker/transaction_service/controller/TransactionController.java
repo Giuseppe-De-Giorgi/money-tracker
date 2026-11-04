@@ -6,11 +6,9 @@ import com.moneytracker.transaction_service.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Transaction;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -32,5 +30,11 @@ public class TransactionController {
                 .toUri();
 
         return ResponseEntity.created(location).body(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<@NonNull TransactionResponse> getTransactionById(@PathVariable Long id){
+        TransactionResponse response = transactionService.getById(id);
+        return ResponseEntity.ok(response);
     }
 }

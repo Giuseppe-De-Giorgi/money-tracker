@@ -2,6 +2,7 @@ package com.moneytracker.transaction_service.controller;
 
 import com.moneytracker.transaction_service.dto.TransactionResponse;
 import com.moneytracker.transaction_service.enums.TransactionType;
+import com.moneytracker.transaction_service.exception.TransactionNotFoundException;
 import com.moneytracker.transaction_service.service.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TransactionController.class)
@@ -106,5 +107,34 @@ class TransactionControllerTest {
                 .andExpect(jsonPath("$.errors.type").exists());
 
         verify(transactionService, times(0)).create(any());
+    }
+
+    @Test
+    void getTransaction_return200() throws Exception{
+        TransactionResponse response = new TransactionResponse(
+                1L,
+                new BigDecimal("50.00"),
+                "Groceries",
+                TransactionType.EXPENSE,
+                LocalDate.of(2026, 11, 2),
+                "Food"
+        );
+        when(transactionService.getById(1L)).thenReturn(response);
+
+        mockMvc.perform(get("/transactions/{id}", 1L))
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.amount").value(50.00))
+                .andExpect(jsonPath("$.type").value("EXPENSE"))
+                .andExpect(jsonPath("$.data").value("2026-11-02"))
+                .andExpect(jsonPath("$.category").value("Food"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getTransaction_return404() throws Exception{
+        when(transactionService.getById(999L)).thenThrow(new TransactionNotFoundException(999L));
+        mockMvc.perform(get("/transactions/{id}", 999L))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Transaction not found with id: 999"));
     }
 }

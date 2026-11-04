@@ -18,10 +18,10 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> handleArgumentNotFound(MethodArgumentNotValidException excpetion){
+    public ResponseEntity<ApiError> handleArgumentNotFound(MethodArgumentNotValidException exception){
         Map<String, List<String>> errors = new HashMap<>();
 
-        for(FieldError error : excpetion.getBindingResult().getFieldErrors()){
+        for(FieldError error : exception.getBindingResult().getFieldErrors()){
             String field = error.getField();
 
             if(!errors.containsKey(field)){
@@ -36,5 +36,15 @@ public class GlobalExceptionHandler {
                 "Validation failed",
                 errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(apiError);
+    }
+
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<ApiError> handleTransactionNotFound(TransactionNotFoundException exception){
+        ApiError apiError = new ApiError(
+                LocalDateTime.now(ZoneId.systemDefault()),
+                HttpStatus.NOT_FOUND.value(),
+                exception.getMessage(),
+                null);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(apiError);
     }
 }

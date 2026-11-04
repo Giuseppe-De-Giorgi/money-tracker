@@ -3,6 +3,7 @@ package com.moneytracker.transaction_service.service;
 import com.moneytracker.transaction_service.dto.TransactionRequest;
 import com.moneytracker.transaction_service.dto.TransactionResponse;
 import com.moneytracker.transaction_service.entity.TransactionEntity;
+import com.moneytracker.transaction_service.exception.TransactionNotFoundException;
 import com.moneytracker.transaction_service.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,5 +29,11 @@ public class TransactionService {
         log.info("Transaction created with ID: {}", saved.getId());
 
         return TransactionResponse.fromEntity(saved);
+    }
+
+    @Transactional(readOnly = true)//evita il dirty checking quindi non confronta gli oggetti in memoria con quelli nel database ottimizzando la connessione
+    public TransactionResponse getById(Long id) {
+        TransactionEntity transactionEntity = transactionRepository.findById(id).orElseThrow(() -> new TransactionNotFoundException(id));
+        return TransactionResponse.fromEntity(transactionEntity);
     }
 }

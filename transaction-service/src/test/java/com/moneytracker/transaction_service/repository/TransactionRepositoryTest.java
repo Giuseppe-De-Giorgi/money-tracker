@@ -14,6 +14,7 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +31,30 @@ class TransactionRepositoryTest {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+     @Test
+     void save_two_transactions(){
+         //given
+         TransactionEntity transactionEntity1 = new TransactionEntity();
+         transactionEntity1.setAmount(new BigDecimal("12.50"));
+         transactionEntity1.setType(TransactionType.EXPENSE);
+         transactionEntity1.setCategory("Food");
+         transactionEntity1.setData(LocalDate.of(2026, 10, 21));
+         transactionEntity1.setDescription("Lunch");
+
+         TransactionEntity transactionEntity2 = new TransactionEntity();
+         transactionEntity2.setAmount(new BigDecimal("15.00"));
+         transactionEntity2.setType(TransactionType.EXPENSE);
+         transactionEntity2.setCategory("Transport");
+         transactionEntity2.setData(LocalDate.of(2026, 10, 22));
+         transactionEntity2.setDescription("Bus fare");
+
+         transactionRepository.saveAll(List.of(transactionEntity1, transactionEntity2));
+
+         List<TransactionEntity> getData = transactionRepository.findAll();
+         assertThat(getData).hasSize(2);
+
+     }
 
     @Test
     void save_and_find_by_id() {

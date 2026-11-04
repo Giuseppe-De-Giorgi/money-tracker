@@ -14,9 +14,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TransactionController.class)
@@ -56,7 +56,12 @@ class TransactionControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "http://localhost/transactions/1"))
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.category").value("Food"));
+                .andExpect(jsonPath("$.amount").value(50.00))
+                .andExpect(jsonPath("$.type").value("EXPENSE"))
+                .andExpect(jsonPath("$.data").value("2026-11-02"))
+                .andExpect(jsonPath("$.category").value("Food"))
+                ;
+        verify(transactionService, times(1)).create(any());
     }
 
     @Test
@@ -80,5 +85,26 @@ class TransactionControllerTest {
                 .andExpect(jsonPath("$.errors.category").exists());
 
         verifyNoInteractions(transactionService);
+    }
+
+    @Test
+    void createTransaction_missingType_returns400() throws Exception {
+        String body = """
+                {
+                  "amount": 50.00,
+                  "description": "Groceries",
+                  "data": "2026-11-02",
+                  "category": "Food"
+                }
+                """;
+
+        mockMvc.perform(post("/transactions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.errors.type").exists());
+
+        verify(transactionService, times(0)).create(any());
     }
 }
